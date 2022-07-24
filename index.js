@@ -1,11 +1,27 @@
-const express = require('express')
-
+const express = require("express");
+const bodyparser = require("body-parser");
+const userRoute = require("./routes/user-route");
+const photoBasedRoute = require("./routes/photo-based-route");
+const categoryRoute = require("./routes/category-route")
 const app = express();
+const db = require("./connection");
 
-app.get('/',(req,res)=>{
-    res.send("listening ...")
-})
+app.use(express.static("./public"));
+app.use(bodyparser.json());
+app.use(
+  bodyparser.urlencoded({
+    extended: true,
+  })
+);
+app.use(express.json());
 
-app.listen(3000,function(){
-    console.log("listening on port 3000 ")
-})
+app.use("/api", userRoute.routes);
+app.use("/api",photoBasedRoute.routes)
+app.use("/api",categoryRoute.routes)
+// app.post("/post", upload.single("image"), (req, res) => {
+
+// });
+
+app.listen(3000, function () {
+  console.log("listening on port 3000 ");
+});
