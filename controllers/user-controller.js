@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 let refreshTokenList = [];
 
-
 const getUsers = async (req, res, next) => {
   const query = `select * from users`;
   db.query(query, (err, result) => {
@@ -30,8 +29,6 @@ const addUser = async (req, res, next) => {
       req.body.role
     );
 
-    // { name: req.body.name, password: hashedPassword };
-    console.log("user : ", user);
     const query = `INSERT INTO users (full_name,user_name,email,password,role_id) VALUES('${user.fullName}','${user.userName}','${user.email}','${user.password}','${user.role}')`;
     db.query(query, (err, result) => {
       if (err) res.send(err);
@@ -60,10 +57,8 @@ const addUser = async (req, res, next) => {
 const allUsers = async () => {
   return new Promise((resolve, reject) => {
     const query = `select * from users`;
-    console.log("query : ", query);
     db.query(query, (err, result) => {
       if (err) reject(err);
-      console.log("return : ", result);
       resolve(result);
     });
   });
@@ -83,7 +78,6 @@ const login = async (req, res, next) => {
         const accessToken = generateAccessToken(user);
         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
         refreshTokenList.push(refreshToken);
-        console.log("stored refresh token", refreshToken);
         res.json({ accessToken: accessToken, refreshToken: refreshToken });
       } else {
         res.send("incorrect password");
@@ -114,9 +108,7 @@ const refreshToken = async (req, res, next) => {
   const token = req.body.token;
 
   if (token == null || token == undefined) return res.sendStatus(401);
-  console.log("res : ", token);
   if (!refreshTokenList.includes(token)) return res.sendStatus(403);
-  console.log("res : ", refreshTokenList);
   jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     const accessToken = generateAccessToken({ name: user.name });
