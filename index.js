@@ -6,7 +6,9 @@ const categoryRoute = require("./routes/category-route");
 const photoBasedRoute = require("./routes/photo-based-route");
 const app = express();
 const db = require("./connection");
+const cors = require('cors')
 
+app.use(cors())
 app.use(express.static("./public"));
 app.use(bodyparser.json());
 app.use(
