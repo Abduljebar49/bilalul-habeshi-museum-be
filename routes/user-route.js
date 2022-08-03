@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.get("/users", getUsers);
-router.post("/users", addUser);
+router.post("/user", addUser);
 // router.get("/users", authenticateToken, getUsers);
 router.post("/login", login);
 router.post("/token", refreshToken);

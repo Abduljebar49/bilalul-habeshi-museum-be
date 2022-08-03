@@ -6,17 +6,32 @@ const categoryRoute = require("./routes/category-route");
 const photoBasedRoute = require("./routes/photo-based-route");
 const app = express();
 const db = require("./connection");
-const cors = require('cors')
+const cors = require('cors');
+const corsOpts = {
+  origin: '*',
 
-app.use(cors())
+  methods: [
+    'GET',
+    'POST',
+  ],
+
+  allowedHeaders: [
+    'Content-Type',
+  ],
+};
+
+app.use(cors(corsOpts));
+// app.use(cors());
 app.use(express.static("./public"));
-app.use(bodyparser.json());
+// app.use(bodyparser.json());
 app.use(
   bodyparser.urlencoded({
     extended: true,
   })
 );
 app.use(express.json());
+
+
 
 app.use("/api", userRoute.routes);
 app.use("/api", roleRoute.routes);

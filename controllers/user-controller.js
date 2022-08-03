@@ -65,6 +65,7 @@ const allUsers = async () => {
 };
 
 const login = async (req, res, next) => {
+  console.log("body : ",req.body);
   try {
     const rows = await allUsers();
     // if (users === -1) res.status(500).send({ message: "error" });
@@ -72,20 +73,23 @@ const login = async (req, res, next) => {
     const user = resultArray.find(
       (user) => user.user_name === req.body.username
     );
+    console.log("user: ",user)
     try {
       if (await bcrypt.compare(req.body.password, user.password)) {
         // res.send("Success");
         const accessToken = generateAccessToken(user);
         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
         refreshTokenList.push(refreshToken);
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
+        res.json({user, accessToken: accessToken, refreshToken: refreshToken });
       } else {
-        res.send("incorrect password");
+        res.send({message:"incorrect password"});
       }
     } catch (err) {
-      res.status(500).send(err);
+      console.log("erro : ",err)
+      res.status(401).send({message:"Username or password incorrect"});
     }
   } catch (error) {
+    console.log("erro : ",error)
     res.status(500).send({ error });
   }
 };
