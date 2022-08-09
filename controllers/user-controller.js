@@ -31,7 +31,9 @@ const addUser = async (req, res, next) => {
 
     const query = `INSERT INTO users (full_name,user_name,email,password,role_id) VALUES('${user.fullName}','${user.userName}','${user.email}','${user.password}','${user.role}')`;
     db.query(query, (err, result) => {
-      if (err) res.send(err);
+      console.log('Am In')
+      if (err)
+      {res.send(err);}
       var id = "";
       try {
         id = result.insertId;
@@ -45,12 +47,13 @@ const addUser = async (req, res, next) => {
           name: user.fullName,
           username: user.userName,
           email: user.email,
+          password:user.hashedPassword,
           role: user.role,
         },
       });
     });
   } catch (er) {
-    res.status(500).send(er);
+    res.status(500).send({message:'All FIelds are required','error': er});
   }
 };
 
