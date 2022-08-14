@@ -4,7 +4,7 @@ let connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "bilal-habeshi",
+  database: "skylinkictcom_bilal-habeshi",
 });
 
 connection.connect(function (err) {
