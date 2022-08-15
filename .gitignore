@@ -6,7 +6,7 @@
 # Node artifact files
 node_modules/
 dist/
-/connection.js
+# /connection.js
 # Compiled Java class files
 *.class
 

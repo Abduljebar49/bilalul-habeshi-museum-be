@@ -11,7 +11,13 @@ const getUsers = async (req, res, next) => {
     const query = `select * from users`;
     db.query(query, (err, result) => {
       if (err) res.send(err);
+      // if(res.length > 0){
+      //   var temp = [];
 
+      //   res.foreach(ele=>{
+      //     temp.push({})
+      //   })
+      // }
       res.status(200).send(result);
     });
   } catch (er) {
