@@ -79,6 +79,20 @@ const getSingleData = async (req, res, next) => {
   }
 };
 
+const deletePhotoBased = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const query = `delete from photo_based where id=${id}`;
+    db.query(query, (err, result) => {
+      console.log("result : ", result);
+      if (err) res.sendStatus(401).send(err);
+      res.status(200).send({ message: "successfully deleted", data: result });
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
 const getAll = async (req, res, next) => {
   try {
     const query = `select * from photo_based`;
@@ -113,4 +127,5 @@ module.exports = {
   upload,
   getSingleData,
   getAll,
+  deletePhotoBased,
 };

@@ -6,26 +6,66 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 let refreshTokenList = [];
 
+const deleteUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const query = `delete from users where id=${id}`;
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+      res.status(200).send({ message: "successfully deleted", data: result });
+    });
+  } catch (er) {
+    res.sendStatus(500).send(er);
+  }
+};
+
+const getUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const query = `select * from users where id=${id}`;
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+      // var temp = [];
+      // if(res.length > 0){
+
+      // res.foreach(ele=>{
+      //   temp.push({
+      //     id:ele.id,
+      //     name:ele.full_name,
+      //     email:ele.email,
+      //     role_id:ele.role_id,
+      //     username:ele.user_name
+      //   })
+      // });
+      res.status(200).send(result);
+      // }else
+      // res.status(200).send(result);
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
 const getUsers = async (req, res, next) => {
   try {
     const query = `select * from users`;
     db.query(query, (err, result) => {
       if (err) res.send(err);
-      if(res.length > 0){
-        var temp = [];
+      var temp = [];
+      // if(res.length > 0){
 
-        res.foreach(ele=>{
-          temp.push({
-            id:ele.id,
-            name:ele.full_name,
-            email:ele.email,
-            role_id:ele.role_id,
-            username:ele.user_name
-          })
-        });
-        res.status(200).send(temp);
-      }else
+      // result.foreach(ele=>{
+      //   temp.push({
+      //     id:ele.id,
+      //     name:ele.full_name,
+      //     email:ele.email,
+      //     role_id:ele.role_id,
+      //     username:ele.user_name
+      //   })
+      // });
       res.status(200).send(result);
+      // }else
+      // res.status(200).send(result);
     });
   } catch (er) {
     res.send(er);
@@ -175,4 +215,6 @@ module.exports = {
   refreshToken,
   logout,
   addUser,
+  getUser,
+  deleteUser,
 };
