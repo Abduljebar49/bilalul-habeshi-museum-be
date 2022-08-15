@@ -47,7 +47,7 @@ const addUser = async (req, res, next) => {
           name: user.fullName,
           username: user.userName,
           email: user.email,
-          password:user.hashedPassword,
+          // password:user.hashedPassword,
           role: user.role,
         },
       });
