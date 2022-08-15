@@ -88,7 +88,6 @@ const addUser = async (req, res, next) => {
 
     const query = `INSERT INTO users (full_name,user_name,email,password,role_id) VALUES('${user.fullName}','${user.userName}','${user.email}','${user.password}','${user.role}')`;
     db.query(query, (err, result) => {
-      console.log("Am In");
       if (err) {
         res.send(err);
       }
@@ -106,6 +105,48 @@ const addUser = async (req, res, next) => {
           username: user.userName,
           email: user.email,
           // password:user.hashedPassword,
+          role: user.role,
+        },
+      });
+    });
+  } catch (er) {
+    res.status(500).send({ message: "All FIelds are required", error: er });
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const user = new User(
+      req.body.name,
+      req.body.username,
+      req.body.email,
+      hashedPassword,
+      req.body.role
+    );
+
+    // const query = `INSERT INTO users (full_name,user_name,email,password,role_id) VALUES('${user.fullName}','${user.userName}','${user.email}','${user.password}','${user.role}')`;
+    var updateData = `UPDATE users SET full_name = '${user.name}',
+                                user_name = '${user.userName}',
+                                email = '${user.email}',
+                                password = '${user.password}',
+                                role_id = '${user.role}'
+                                WHERE id=${id}`;
+
+    db.query(updateData, (err, result) => {
+      if (err) {
+        res.send(err);
+      }
+      res.status(201).send({
+        message: "successfully updated",
+        data: {
+          id: id,
+          name: user.fullName,
+          username: user.userName,
+          email: user.email,
           role: user.role,
         },
       });
@@ -217,4 +258,5 @@ module.exports = {
   addUser,
   getUser,
   deleteUser,
+  update
 };

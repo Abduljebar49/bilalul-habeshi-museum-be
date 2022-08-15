@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const db = require("../connection");
+const PhotoBasedWithOutImageDto = require("../models/pb-dto-without-image");
 const PhotoBased = require("../models/photo-based");
 const PhotoBasedDto = require("../models/photo-based-dto");
 
@@ -61,6 +62,34 @@ const create = async (req, res, next) => {
     }
   } catch (er) {
     res.send(er);
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.params.id;
+    var pbNew = new PhotoBasedWithOutImageDto(
+      data.name,
+      data.description,
+      data.category,
+      data.code
+    );
+    var updateData = `UPDATE photo_based SET name = '${pbNew.name}',
+                                description = '${pbNew.description}',
+                                category = '${pbNew.category}',
+                                code = '${pbNew.code}'
+                                WHERE id=${id}
+                    `;
+    db.query(updateData, (err, result) => {
+      if (err) {
+        res.status(500);
+        throw err;
+      }
+      res.status(200).send({ message: "Successfully updated!", data: pbNew });
+    });
+  } catch (er) {
+    res.sendStatus(500).send(er);
   }
 };
 
@@ -128,4 +157,5 @@ module.exports = {
   getSingleData,
   getAll,
   deletePhotoBased,
+  update
 };
