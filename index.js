@@ -5,6 +5,7 @@ const roleRoute = require("./routes/role-route");
 const categoryRoute = require("./routes/category-route");
 const photoBasedRoute = require("./routes/photo-based-route");
 const app = express();
+const http = require("http");
 const db = require("./connection");
 const cors = require('cors');
 const corsOpts = {
@@ -42,6 +43,8 @@ app.use("/api", categoryRoute.routes);
 
 // });
 
-app.listen(3000, function () {
-  console.log("listening on port 3000 ");
-});
+// app.listen(3000, function () {
+//   console.log("listening on port 3000 ");
+// });
+var server = http.createServer(app);
+server.listen();
