@@ -10,7 +10,7 @@ const create = async (req, res, next) => {
     res.status(401).send("No file to upload");
   } else {
     const data = req.body;
-    var imgsrc = "http://bilal-backend.skylinkict.com/images/" + req.file.filename;
+    var imgsrc = "https://bilal-backend.skylinkict.com/images/" + req.file.filename;
     var pbNew = new PhotoBasedDto(
       data.name,
       data.description,
