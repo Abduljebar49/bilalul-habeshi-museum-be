@@ -129,7 +129,7 @@ const update = async (req, res, next) => {
     );
 
     // const query = `INSERT INTO users (full_name,user_name,email,password,role_id) VALUES('${user.fullName}','${user.userName}','${user.email}','${user.password}','${user.role}')`;
-    var updateData = `UPDATE users SET full_name = '${user.name}',
+    var updateData = `UPDATE users SET full_name = '${user.fullName}',
                                 user_name = '${user.userName}',
                                 email = '${user.email}',
                                 password = '${user.password}',

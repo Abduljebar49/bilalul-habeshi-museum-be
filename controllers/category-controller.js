@@ -47,6 +47,28 @@ const addCategory = async (req, res, next) => {
   }
 };
 
+const updateCategory = async (req, res, next) => {
+  try {
+    const name = req.body.name;
+    const id = req.params.id;
+
+    const query = `UPDATE category SET name='${name}' where id=${id}`;
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+
+      res.status(201).send({
+        message: "successfully updated",
+        data: {
+          id: id,
+          name: name,
+        },
+      });
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
 const deleteCategory = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -73,4 +95,5 @@ module.exports = {
   getCategory,
   addCategory,
   deleteCategory,
+  updateCategory
 };

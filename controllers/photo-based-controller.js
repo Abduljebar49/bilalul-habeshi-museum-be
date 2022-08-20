@@ -69,12 +69,22 @@ const update = async (req, res, next) => {
   try {
     const data = req.body;
     const id = req.params.id;
+
     var pbNew = new PhotoBasedWithOutImageDto(
       data.name,
       data.description,
       data.category,
       data.code
     );
+    if (pbNew.name === null && pbNew.name === undefined) {
+      res.status(401).send({ message: "invalid name field" });
+    } else if (pbNew.description === null && pbNew.description === undefined) {
+      res.status(401).send({ message: "invalid description field" });
+    } else if (pbNew.category === null && pbNew.category === undefined) {
+      res.status(401).send({ message: "invalid category field" });
+    } else if (pbNew.code === null && pbNew.code === undefined) {
+      res.status(401).send({ message: "invalid code field" });
+    }
     var updateData = `UPDATE photo_based SET name = '${pbNew.name}',
                                 description = '${pbNew.description}',
                                 category = '${pbNew.category}',
@@ -88,6 +98,67 @@ const update = async (req, res, next) => {
       }
       res.status(200).send({ message: "Successfully updated!", data: pbNew });
     });
+  } catch (er) {
+    res.sendStatus(500).send(er);
+  }
+};
+
+const updateWithImage = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.params.id;
+
+    if (!req.file) {
+      console.log("No file upload");
+      res.status(401).send("No file to upload");
+    } else {
+      const data = req.body;
+      var imgsrc =
+        "https://bilal-backend.skylinkict.com/images/" + req.file.filename;
+      var pbNew = new PhotoBasedDto(
+        data.name,
+        data.description,
+        data.category,
+        imgsrc,
+        data.code
+      );
+
+      if (pbNew.name === null && pbNew.name === undefined) {
+        res.status(401).send({ message: "invalid name field" });
+      } else if (
+        pbNew.description === null &&
+        pbNew.description === undefined
+      ) {
+        res.status(401).send({ message: "invalid description field" });
+      } else if (pbNew.category === null && pbNew.category === undefined) {
+        res.status(401).send({ message: "invalid category field" });
+      } else if (pbNew.photo === null && pbNew.photo === undefined) {
+        res.status(401).send({ message: "invalid photo field" });
+      } else if (pbNew.code === null && pbNew.code === undefined) {
+        res.status(401).send({ message: "invalid code field" });
+      }
+
+      // var pbNew = new PhotoBasedWithOutImageDto(
+      //   data.name,
+      //   data.description,
+      //   data.category,
+      //   data.code
+      // );
+      var updateData = `UPDATE photo_based SET name = '${pbNew.name}',
+                                description = '${pbNew.description}',
+                                category = '${pbNew.category}',
+                                code = '${pbNew.code}',
+                                photo_url = '${pbNew.photo}'
+                                WHERE id=${id}
+                    `;
+      db.query(updateData, (err, result) => {
+        if (err) {
+          res.status(500);
+          throw err;
+        }
+        res.status(200).send({ message: "Successfully updated!", data: pbNew });
+      });
+    }
   } catch (er) {
     res.sendStatus(500).send(er);
   }
@@ -157,5 +228,6 @@ module.exports = {
   getSingleData,
   getAll,
   deletePhotoBased,
-  update
+  update,
+  updateWithImage
 };
