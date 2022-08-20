@@ -21,8 +21,8 @@ const corsOpts = {
   ],
 };
 
-app.use(cors(corsOpts));
-// app.use(cors());
+//app.use(cors(corsOpts));
+app.use(cors());
 app.use(express.static("./public"));
 // app.use(bodyparser.json());
 app.use(
