@@ -10,20 +10,14 @@ const db = require("./connection");
 const cors = require('cors');
 // const corsOpts = {
 //   origin: '*',
-
-//   methods: [
-//     'GET',
-//     'POST',
-//   ],
-
 //   allowedHeaders: [
 //     'Content-Type',
 //   ],
 // };
 
-// app.use(cors(corsOpts));
 app.use(cors());
 app.use(express.static("./public"));
+
 // app.use(bodyparser.json());
 app.use(
   bodyparser.urlencoded({
