@@ -24,8 +24,9 @@ app.use(
     extended: true,
   })
 );
-app.use(express.json());
 
+app.use(express.json());
+ 
 
 
 app.use("/api", userRoute.routes);
