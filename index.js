@@ -8,21 +8,21 @@ const app = express();
 const http = require("http");
 const db = require("./connection");
 const cors = require('cors');
-const corsOpts = {
-  origin: '*',
+// const corsOpts = {
+//   origin: '*',
 
-  methods: [
-    'GET',
-    'POST',
-  ],
+//   methods: [
+//     'GET',
+//     'POST',
+//   ],
 
-  allowedHeaders: [
-    'Content-Type',
-  ],
-};
+//   allowedHeaders: [
+//     'Content-Type',
+//   ],
+// };
 
-app.use(cors(corsOpts));
-// app.use(cors());
+// app.use(cors(corsOpts));
+app.use(cors());
 app.use(express.static("./public"));
 // app.use(bodyparser.json());
 app.use(
