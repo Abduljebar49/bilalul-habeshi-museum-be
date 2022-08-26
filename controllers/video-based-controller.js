@@ -30,9 +30,7 @@ const create = async (req, res, next) => {
       console.log("data : ", pbNew);
       pbNew.category = parseInt(pbNew.category);
       // if (data.name == null || data.c)
-      var insertData = `INSERT INTO video_based (name,description,video_url) values('
-      ${pbNew.name}',
-         '${pbNew.description}','${pbNew.video}')`;
+      var insertData = `INSERT INTO video_based (name,description,video_url) values('${pbNew.name}', '${pbNew.description}','${pbNew.video}')`;
       db.query(insertData, (err, result) => {
         if (err) {
           res.status(500).send(err);
