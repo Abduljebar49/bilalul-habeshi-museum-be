@@ -35,7 +35,7 @@ const create = async (req, res, next) => {
          '${pbNew.description}','${pbNew.video}')`;
       db.query(insertData, (err, result) => {
         if (err) {
-          res.status(500);
+          res.status(500).send(err);
           throw err;
         }
         console.log("result : ", result);
