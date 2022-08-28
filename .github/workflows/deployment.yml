@@ -2,7 +2,7 @@ name: bilal habeshi backend
 on:
   push:
     branches:
-      - main
+      - working
 jobs:
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
