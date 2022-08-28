@@ -13,7 +13,7 @@ const create = async (req, res, next) => {
       res.status(401).send("No file to upload");
     } else {
       const data = req.body;
-      var imgsrc = "localhost:3000/videos/" + req.file.filename;
+      var imgsrc = "https://virtual-backend.bilalulhabeshi.com/videos/" + req.file.filename;
       var pbNew = new VideoBasedDto(data.name, data.description, imgsrc);
 
       if (pbNew.name === null && pbNew.name === undefined) {

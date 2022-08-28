@@ -15,7 +15,7 @@ const create = async (req, res, next) => {
     } else {
       const data = req.body;
       var imgsrc =
-        "https://bilal-backend.skylinkict.com/images/" + req.file.filename;
+        "https://virtual-backend.bilalulhabeshi.com/images/" + req.file.filename;
       var pbNew = new PhotoBasedDto(
         data.name,
         data.description,
