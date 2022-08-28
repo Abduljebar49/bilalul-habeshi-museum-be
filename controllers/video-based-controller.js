@@ -94,6 +94,7 @@ const getSingleData = async (req, res, next) => {
       res.status(200).send(result);
     });
   } catch (er) {
+    console.log("er : ",er);
     res.send(er);
   }
 };
