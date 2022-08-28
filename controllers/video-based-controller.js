@@ -13,7 +13,8 @@ const create = async (req, res, next) => {
       res.status(401).send("No file to upload");
     } else {
       const data = req.body;
-      var imgsrc = "https://bilal-backend.skylinkict.com/videos/" + req.file.filename;
+      var imgsrc =
+        "https://bilal-backend.skylinkict.com/videos/" + req.file.filename;
       var pbNew = new VideoBasedDto(data.name, data.description, imgsrc);
 
       if (pbNew.name === null && pbNew.name === undefined) {
@@ -102,23 +103,23 @@ const deleteVideoBased = async (req, res, next) => {
     const query = `delete from video_based where id=${id}`;
 
     const queryGet = `select * from video_based where id=${id}`;
-    db.query(queryGet, async (err, result) => {
-      if (err) res.send(err);
-      const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
-        .video_url;
-      var temp1 = "" + temp;
-      temp1 = temp1.substring(22, temp1.length);
-      try {
-        await removeFile(temp1);
-      } catch {}
-      
-      db.query(query, (err, result) => {
-        console.log("result : ", result);
-        if (err) res.sendStatus(401).send(err);
-        res.status(200).send({ message: "successfully deleted", data: result });
-      });
-      res.status(200).send(result);
+    // db.query(queryGet, async (err, result) => {
+    //   if (err) res.send(err);
+    //   const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
+    //     .video_url;
+    //   var temp1 = "" + temp;
+    //   temp1 = temp1.substring(22, temp1.length);
+    //   try {
+    //     await removeFile(temp1);
+    //   } catch {}
+
+    db.query(query, (err, result) => {
+      console.log("result : ", result);
+      if (err) res.sendStatus(401).send(err);
+      res.status(200).send({ message: "successfully deleted", data: result });
     });
+    //   res.status(200).send(result);
+    // });
   } catch (er) {
     res.send(er);
   }
