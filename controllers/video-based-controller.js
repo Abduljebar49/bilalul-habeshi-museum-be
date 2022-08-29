@@ -3,8 +3,8 @@ const path = require("path");
 const db = require("../connection");
 const VideoBased = require("../models/video-based");
 const VideoBasedDto = require("../models/video-based-dto");
-var fs = require("fs");
-const fsPromises = require("fs/promises");
+// var fs = require("fs");
+// const fsPromises = require("fs/promises");
 
 const create = async (req, res, next) => {
   try {
@@ -13,7 +13,9 @@ const create = async (req, res, next) => {
       res.status(401).send("No file to upload");
     } else {
       const data = req.body;
-      var imgsrc = "https://virtual-backend.bilalulhabeshi.com/videos/" + req.file.filename;
+      var imgsrc =
+        "https://virtual-backend.bilalulhabeshi.com/videos/" +
+        req.file.filename;
       var pbNew = new VideoBasedDto(data.name, data.description, imgsrc);
 
       if (pbNew.name === null && pbNew.name === undefined) {
@@ -95,7 +97,7 @@ const getSingleData = async (req, res, next) => {
     });
   } catch (er) {
     // console.log("er : ",er);
-     res.send(er);
+    res.send(er);
   }
 };
 
@@ -104,42 +106,42 @@ const deleteVideoBased = async (req, res, next) => {
     const id = req.params.id;
     const query = `delete from video_based where id=${id}`;
 
-    const queryGet = `select * from video_based where id=${id}`;
-    db.query(queryGet, async (err, result) => {
-      if (err) res.send(err);
-      const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
-        .video_url;
-      var temp1 = "" + temp;
-      temp1 = temp1.substring(22, temp1.length);
-      try {
-        await removeFile(temp1);
-      } catch {}
-      
-      db.query(query, (err, result) => {
-        console.log("result : ", result);
-        if (err) res.sendStatus(401).send(err);
-        res.status(200).send({ message: "successfully deleted", data: result });
-      });
-      res.status(200).send(result);
+    // const queryGet = `select * from video_based where id=${id}`;
+    // db.query(queryGet, async (err, result) => {
+    //   if (err) res.send(err);
+    //   const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
+    //     .video_url;
+    //   var temp1 = "" + temp;
+    //   temp1 = temp1.substring(22, temp1.length);
+    //   try {
+    //     await removeFile(temp1);
+    //   } catch {}
+
+    db.query(query, (err, result) => {
+      console.log("result : ", result);
+      if (err) res.sendStatus(401).send(err);
+      res.status(200).send({ message: "Successfully deleted", data: result });
     });
+    res.status(200).send(result);
+    // });
   } catch (er) {
     res.send(er);
   }
 };
 
-const deleteFile = async (filePath) => {
-  try {
-    await fsPromises.unlink(filePath);
-    console.log("Successfully removed file!");
-  } catch (err) {
-    console.log(err);
-  }
-};
+// const deleteFile = async (filePath) => {
+//   try {
+//     await fsPromises.unlink(filePath);
+//     console.log("Successfully removed file!");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
-const removeFile = async (fileName) => {
-  const filePath = "./public/videos/" + fileName;
-  var res = await deleteFile(filePath);
-};
+// const removeFile = async (fileName) => {
+//   const filePath = "./public/videos/" + fileName;
+//   var res = await deleteFile(filePath);
+// };
 module.exports = {
   create,
   upload,

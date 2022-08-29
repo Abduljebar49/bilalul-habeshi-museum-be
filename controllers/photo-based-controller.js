@@ -6,7 +6,6 @@ const PhotoBased = require("../models/photo-based");
 const PhotoBasedDto = require("../models/photo-based-dto");
 const fsPromises = require("fs/promises");
 
-
 const create = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -15,7 +14,8 @@ const create = async (req, res, next) => {
     } else {
       const data = req.body;
       var imgsrc =
-        "https://virtual-backend.bilalulhabeshi.com/images/" + req.file.filename;
+        "https://virtual-backend.bilalulhabeshi.com/images/" +
+        req.file.filename;
       var pbNew = new PhotoBasedDto(
         data.name,
         data.description,
@@ -186,24 +186,24 @@ const deletePhotoBased = async (req, res, next) => {
     const id = req.params.id;
     const query = `delete from photo_based where id=${id}`;
 
-    const queryGet = `select * from photo_based where id=${id}`;
-    db.query(queryGet, async (err, result) => {
-      if (err) res.send(err);
-      const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
-        .video_url;
-      var temp1 = "" + temp;
-      temp1 = temp1.substring(22, temp1.length);
-      try {
-        await removeFile(temp1);
-      } catch {}
-      
-      db.query(query, (err, result) => {
-        console.log("result : ", result);
-        if (err) res.sendStatus(401).send(err);
-        res.status(200).send({ message: "successfully deleted", data: result });
-      });
-      res.status(200).send(result);
+    // const queryGet = `select * from photo_based where id=${id}`;
+    // db.query(queryGet, async (err, result) => {
+    //   if (err) res.send(err);
+    //   const temp = Object.values(JSON.parse(JSON.stringify(result)))[0]
+    //     .video_url;
+    //   var temp1 = "" + temp;
+    //   temp1 = temp1.substring(22, temp1.length);
+    //   try {
+    //     await removeFile(temp1);
+    //   } catch {}
+
+    db.query(query, (err, result) => {
+      // console.log("result : ", result);
+      if (err) res.sendStatus(401).send(err);
+      res.status(200).send({ message: "successfully deleted", data: result });
     });
+    res.status(200).send(result);
+    // });
   } catch (er) {
     res.send(er);
   }
@@ -250,20 +250,19 @@ var upload = multer({
   storage: storage,
 });
 
+// const deleteFile = async (filePath) => {
+//   try {
+//     await fsPromises.unlink(filePath);
+//     console.log("Successfully removed file!");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
-const deleteFile = async (filePath) => {
-  try {
-    await fsPromises.unlink(filePath);
-    console.log("Successfully removed file!");
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const removeFile = async (fileName) => {
-  const filePath = "./public/images/" + fileName;
-  var res = await deleteFile(filePath);
-};
+// const removeFile = async (fileName) => {
+//   const filePath = "./public/images/" + fileName;
+//   var res = await deleteFile(filePath);
+// };
 module.exports = {
   create,
   upload,
@@ -271,5 +270,5 @@ module.exports = {
   getAll,
   deletePhotoBased,
   update,
-  updateWithImage
+  updateWithImage,
 };
