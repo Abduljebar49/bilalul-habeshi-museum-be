@@ -12,6 +12,7 @@ const create = async (req, res, next) => {
       console.log("No file upload");
       res.status(401).send("No file to upload");
     } else {
+      console.log("data : ", req.body);      
       const data = req.body;
       var imgsrc =
         "https://virtual-backend.bilalulhabeshi.com/images/" +

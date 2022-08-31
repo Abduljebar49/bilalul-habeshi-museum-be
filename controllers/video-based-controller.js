@@ -7,6 +7,57 @@ const VideoBasedDto = require("../models/video-based-dto");
 // const fsPromises = require("fs/promises");
 
 const create = async (req, res, next) => {
+  // try {
+  //   if (!req.file) {
+  //     console.log("No file upload");
+  //     res.status(401).send("No file to upload");
+  //   } else {
+  //     console.log("data : ", req.body);
+  //     const data = req.body;
+  //     var imgsrc =
+  //       "https://virtual-backend.bilalulhabeshi.com/videos/" +
+  //       req.file.filename;
+  //     var pbNew = new VideoBasedDto(
+  //       data.name,
+  //       data.description,
+  //       imgsrc,
+  //     );
+
+  //     if (pbNew.name === null && pbNew.name === undefined) {
+  //       res.status(401).send({ message: "invalid name field" });
+  //     }else if (
+  //       pbNew.description === null &&
+  //       pbNew.description === undefined
+  //     ) {
+  //       res.status(401).send({ message: "invalid description field" });
+  //     }else if (pbNew.video === null && pbNew.video === undefined) {
+  //       res.status(401).send({ message: "invalid video field" });
+  //     }
+
+  //     var insertData = `INSERT INTO photo_based (name,description,category,code,photo_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}')`;
+  //     db.query(insertData, (err, result) => {
+  //       if (err) {
+  //         res.status(500);
+  //         throw err;
+  //       }
+  //       console.log("result : ", result);
+  //       var pbSaved = new PhotoBased(
+  //         result.insertId,
+  //         pbNew.name,
+  //         pbNew.description,
+  //         pbNew.category,
+  //         pbNew.photo,
+  //         pbNew.code
+  //       );
+  //       res
+  //         .status(200)
+  //         .send({ message: "Successfully uploaded!", data: pbSaved });
+  //     });
+  //   }
+  // } catch (er) {
+  //   res.send(er);
+  // }
+
   try {
     if (!req.file) {
       console.log("No file upload");
