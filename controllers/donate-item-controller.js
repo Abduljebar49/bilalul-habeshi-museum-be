@@ -85,16 +85,15 @@ const deleteItem = async (req, res, next) => {
 
     db.query(query, (err, result) => {
       try {
-        if (err) res.sendStatus(401).send(err);
+        if (err) res.sendStatus(401).send({err});
         res.status(200).send({ message: "successfully deleted", data: result });
       } catch {
         res.send([]);
       }
     });
-    res.status(200).send(result);
-    // });
+    res.status(200).send({result});
   } catch (er) {
-    res.send(er);
+    res.send([]);
   }
 };
 
