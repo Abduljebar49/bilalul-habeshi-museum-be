@@ -250,7 +250,7 @@ const getAllCategory = async (req, res, next) => {
 const getFromTableNumber = (ele, number) => {
   return new Promise((resolve, reject) => {
     try {
-      const query = `select * from ${TABLENAME} where category=${ele.id} Limit ${number}`;
+      const query = `select * from ${TABLENAME} where category=${ele.id} ORDER BY ID DESC LIMIT ${number}`;
       db.query(query, (err, result) => {
         if (err) reject(err);
         resolve(result);
