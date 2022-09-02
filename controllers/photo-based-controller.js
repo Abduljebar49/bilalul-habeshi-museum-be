@@ -286,50 +286,57 @@ const getFromTable = async (categoryList, number) => {
   });
 };
 
-const getPaginatedList = async (req,res,next)=>{
+const getPaginatedList = async (req, res, next) => {
   var numRows;
   var queryPagination;
   var numPerPage = parseInt(req.query.npp, 10) || 1;
   var page = parseInt(req.query.page, 10) || 0;
   var totalRows = 0;
-  console.log("query : ",req.query);
+  console.log("query : ", req.query);
   var numPages;
   var skip = page * numPerPage;
   // Here we compute the LIMIT parameter for MySQL query
-  var limit = skip + ',' + numPerPage;
-  console.log("limit : ",limit);
+  var limit = skip + "," + numPerPage;
+  console.log("limit : ", limit);
   const datab = new database();
-  datab.query(`SELECT count(*) as numRows FROM ${TABLENAME}`)
-  .then(function(results) {
-    numRows = results[0].numRows;
-    totalRows = numRows;
-    numPages = Math.ceil(numRows / numPerPage);
-    console.log('number of pages:', numPages);
-  })
-  .then(() => datab.query(`SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`))
-  .then(function(results) {
-    var responsePayload = {
-      results: results
-    };
-    if (page < numPages) {
-      responsePayload.pagination = {
-        totalItem:totalRows,
-        current: page,
-        perPage: numPerPage,
-        previous: page > 0 ? page - 1 : undefined,
-        next: page < numPages - 1 ? page + 1 : undefined
-      }
-    }
-    else responsePayload.pagination = {
-      err: 'queried page ' + page + ' is >= to maximum page number ' + numPages
-    }
-    res.json(responsePayload);
-  })
-  .catch(function(err) {
-    console.error(err);
-    res.json({ err: err });
-  });
-}
+  datab
+    .query(`SELECT count(*) as numRows FROM ${TABLENAME}`)
+    .then(function (results) {
+      numRows = results[0].numRows;
+      totalRows = numRows;
+      numPages = Math.ceil(numRows / numPerPage);
+      console.log("number of pages:", numPages);
+    })
+    .then(() =>
+      datab.query(`SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`)
+    )
+    .then(function (results) {
+      var responsePayload = {
+        results: results,
+      };
+      if (page < numPages) {
+        responsePayload.pagination = {
+          totalItem: totalRows,
+          current: page,
+          perPage: numPerPage,
+          previous: page > 0 ? page - 1 : undefined,
+          next: page < numPages - 1 ? page + 1 : undefined,
+        };
+      } else
+        responsePayload.pagination = {
+          err:
+            "queried page " +
+            page +
+            " is >= to maximum page number " +
+            numPages,
+        };
+      res.json(responsePayload);
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.json({ err: err });
+    });
+};
 
 const getHomeCategoryList = async (req, res, next) => {
   console.log("params : ", req.params);
@@ -363,6 +370,24 @@ var upload = multer({
   storage: storage,
 });
 
+var searchCollection = async (req, res, next) => {
+  try {
+    var searchQuery = req.query.q;
+
+    const query = `select * from photo_based where name=${searchQuery}`;
+
+    db.query(query, (err, result) => {
+      if (err) {
+        res.status(500);
+        throw err;
+      }
+      res.send(result);
+    });
+  } catch (er) {
+    res.sendStatus(500).send({ message: "there exists an error" });
+  }
+};
+
 // const deleteFile = async (filePath) => {
 //   try {
 //     await fsPromises.unlink(filePath);
@@ -385,5 +410,6 @@ module.exports = {
   update,
   updateWithImage,
   getHomeCategoryList,
-  getPaginatedList
+  getPaginatedList,
+  searchCollection
 };

@@ -9,6 +9,7 @@ const {
   updateWithImage,
   getHomeCategoryList,
   getPaginatedList,
+  searchCollection,
 } = require("../controllers/photo-based-controller");
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.patch('/pb/:id',upload.single("image"),updateWithImage);
 router.patch('/pbwi/:id',update);
 router.get('/pb-home/:num',getHomeCategoryList);
 router.get('/pb-paginated',getPaginatedList);
+router.get('/pb-search',searchCollection);
 
 module.exports = {
   routes: router,
