@@ -5,14 +5,14 @@ const PhotoBasedWithOutImageDto = require("../models/pb-dto-without-image");
 const PhotoBased = require("../models/photo-based");
 const PhotoBasedDto = require("../models/photo-based-dto");
 const fsPromises = require("fs/promises");
+const database = require("../classes/database");
+const TABLENAME = "photo_based";
 
 const create = async (req, res, next) => {
   try {
     if (!req.file) {
-      console.log("No file upload");
       res.status(401).send("No file to upload");
     } else {
-      console.log("data : ", req.body);      
       const data = req.body;
       var imgsrc =
         "https://virtual-backend.bilalulhabeshi.com/images/" +
@@ -39,11 +39,8 @@ const create = async (req, res, next) => {
       } else if (pbNew.code === null && pbNew.code === undefined) {
         res.status(401).send({ message: "invalid code field" });
       }
-
-      console.log("data : ", pbNew);
       pbNew.category = parseInt(pbNew.category);
-      // if (data.name == null || data.c)
-      var insertData = `INSERT INTO photo_based (name,description,category,code,photo_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}')`;
+      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}')`;
       db.query(insertData, (err, result) => {
         if (err) {
           res.status(500);
@@ -234,6 +231,121 @@ const getAll = async (req, res, next) => {
   }
 };
 
+const getAllCategory = async (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        const query = `select * from category`;
+        db.query(query, (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        });
+      } catch (er) {
+        reject(er);
+      }
+    }, 100);
+  });
+};
+
+const getFromTableNumber = (ele, number) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const query = `select * from ${TABLENAME} where category=${ele.id} Limit ${number}`;
+      db.query(query, (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    } catch (er) {
+      reject(er);
+    }
+  });
+};
+
+const getFromTable = async (categoryList, number) => {
+  var list = [];
+  return new Promise(async (resolve, reject) => {
+    try {
+      var index = 0;
+      await categoryList.forEach(async (ele) => {
+        var res = Object.values(
+          JSON.parse(JSON.stringify(await getFromTableNumber(ele, number)))
+        );
+        list.push({
+          id: ele.id,
+          name: ele.name,
+          data: res,
+        });
+        if (index == categoryList.length - 1) {
+          resolve(list);
+        }
+        index = index + 1;
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const getPaginatedList = async (req,res,next)=>{
+  var numRows;
+  var queryPagination;
+  var numPerPage = parseInt(req.query.npp, 10) || 1;
+  var page = parseInt(req.query.page, 10) || 0;
+  var totalRows = 0;
+  console.log("query : ",req.query);
+  var numPages;
+  var skip = page * numPerPage;
+  // Here we compute the LIMIT parameter for MySQL query
+  var limit = skip + ',' + numPerPage;
+  console.log("limit : ",limit);
+  const datab = new database();
+  datab.query(`SELECT count(*) as numRows FROM ${TABLENAME}`)
+  .then(function(results) {
+    numRows = results[0].numRows;
+    totalRows = numRows;
+    numPages = Math.ceil(numRows / numPerPage);
+    console.log('number of pages:', numPages);
+  })
+  .then(() => datab.query(`SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`))
+  .then(function(results) {
+    var responsePayload = {
+      results: results
+    };
+    if (page < numPages) {
+      responsePayload.pagination = {
+        totalItem:totalRows,
+        current: page,
+        perPage: numPerPage,
+        previous: page > 0 ? page - 1 : undefined,
+        next: page < numPages - 1 ? page + 1 : undefined
+      }
+    }
+    else responsePayload.pagination = {
+      err: 'queried page ' + page + ' is >= to maximum page number ' + numPages
+    }
+    res.json(responsePayload);
+  })
+  .catch(function(err) {
+    console.error(err);
+    res.json({ err: err });
+  });
+}
+
+const getHomeCategoryList = async (req, res, next) => {
+  console.log("params : ", req.params);
+
+  var categoryList = Object.values(
+    JSON.parse(JSON.stringify(await getAllCategory()))
+  );
+  try {
+    var number = req.params.num;
+    var list = await getFromTable(categoryList, number);
+    res.send(list);
+  } catch {
+    res.sendStatus(500).send({ message: "There exist error" });
+  }
+};
+
 var storage = multer.diskStorage({
   destination: (req, file, callBack) => {
     console.log("req");
@@ -272,4 +384,6 @@ module.exports = {
   deletePhotoBased,
   update,
   updateWithImage,
+  getHomeCategoryList,
+  getPaginatedList
 };

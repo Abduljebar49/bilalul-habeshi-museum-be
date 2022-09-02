@@ -7,6 +7,8 @@ const {
   deletePhotoBased,
   update,
   updateWithImage,
+  getHomeCategoryList,
+  getPaginatedList,
 } = require("../controllers/photo-based-controller");
 
 const router = express.Router();
@@ -17,6 +19,8 @@ router.delete("/pb/:id", deletePhotoBased);
 router.get("/pb", getAll);
 router.patch('/pb/:id',upload.single("image"),updateWithImage);
 router.patch('/pbwi/:id',update);
+router.get('/pb-home/:num',getHomeCategoryList);
+router.get('/pb-paginated',getPaginatedList);
 
 module.exports = {
   routes: router,
