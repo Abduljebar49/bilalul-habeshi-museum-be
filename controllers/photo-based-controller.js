@@ -291,6 +291,7 @@ const getPaginatedList = async (req, res, next) => {
   var queryPagination;
   var numPerPage = parseInt(req.query.npp, 10) || 1;
   var page = parseInt(req.query.page, 10) || 0;
+  var categoryId = parseInt(req.query.category)||-1;
   var totalRows = 0;
   console.log("query : ", req.query);
   var numPages;
@@ -299,6 +300,12 @@ const getPaginatedList = async (req, res, next) => {
   var limit = skip + "," + numPerPage;
   console.log("limit : ", limit);
   const datab = new database();
+  var sqlQuery = "";
+  if(categoryId == -1){
+    sqlQuery = `SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`;
+  }else{
+    sqlQuery = `SELECT * FROM ${TABLENAME} where category=${categoryId} ORDER BY ID DESC LIMIT ${limit}`;
+  }
   datab
     .query(`SELECT count(*) as numRows FROM ${TABLENAME}`)
     .then(function (results) {
@@ -308,7 +315,7 @@ const getPaginatedList = async (req, res, next) => {
       console.log("number of pages:", numPages);
     })
     .then(() =>
-      datab.query(`SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`)
+      datab.query(sqlQuery)
     )
     .then(function (results) {
       var responsePayload = {
