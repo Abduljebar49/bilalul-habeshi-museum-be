@@ -2,10 +2,9 @@ let mysql = require("mysql");
 
 let connection = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "",
-  database: "bilal-habeshi",
-});
+  user: "bilalulhabeshico_bilalul-habeshi-user",
+  password: "!OWfYpOOZSWA",
+  database: "bilalulhabeshico_bilalhabeshi",});
 
 connection.connect(function (err) {
   if (err) {
