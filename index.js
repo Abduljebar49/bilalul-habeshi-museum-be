@@ -43,8 +43,8 @@ app.use("/api", visitorsRoute.routes);
 
 // });
 
-app.listen(3000, function () {
-  console.log("listening on port 3000 ");
-});
-// var server = http.createServer(app);
-// server.listen();
+// app.listen(3000, function () {
+//   console.log("listening on port 3000 ");
+// });
+var server = http.createServer(app);
+server.listen();
