@@ -4,9 +4,9 @@ class Database {
   constructor() {
     this.connection = mysql.createConnection({
       host: "localhost",
-      user: "bilalulhabeshico_bilalul-habeshi-user",
-      password: "!OWfYpOOZSWA",
-      database: "bilalulhabeshico_bilalhabeshi",
+      user: "root",
+      password: "",
+      database: "bilal-habeshi",
     });
   }
   query(sql, args) {

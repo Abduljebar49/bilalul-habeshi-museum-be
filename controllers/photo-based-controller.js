@@ -22,7 +22,8 @@ const create = async (req, res, next) => {
         data.description,
         data.category,
         imgsrc,
-        data.code
+        data.code,
+        data.type
       );
 
       if (pbNew.name === null && pbNew.name === undefined) {
@@ -40,7 +41,7 @@ const create = async (req, res, next) => {
         res.status(401).send({ message: "invalid code field" });
       }
       pbNew.category = parseInt(pbNew.category);
-      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}')`;
+      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,type) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.type}')`;
       db.query(insertData, (err, result) => {
         if (err) {
           res.status(500);
@@ -53,7 +54,8 @@ const create = async (req, res, next) => {
           pbNew.description,
           pbNew.category,
           pbNew.photo,
-          pbNew.code
+          pbNew.code,
+          pbNew.type
         );
         res
           .status(200)
@@ -74,7 +76,8 @@ const update = async (req, res, next) => {
       data.name,
       data.description,
       data.category,
-      data.code
+      data.code,
+      data.type
     );
     if (pbNew.name === null && pbNew.name === undefined) {
       res.status(401).send({ message: "invalid name field" });
@@ -88,7 +91,8 @@ const update = async (req, res, next) => {
     var updateData = `UPDATE photo_based SET name = '${pbNew.name}',
                                 description = '${pbNew.description}',
                                 category = '${pbNew.category}',
-                                code = '${pbNew.code}'
+                                code = '${pbNew.code}',
+                                type = '${pbNew.type}'
                                 WHERE id=${id}
                     `;
     db.query(updateData, (err, result) => {
@@ -120,7 +124,8 @@ const updateWithImage = async (req, res, next) => {
         data.description,
         data.category,
         imgsrc,
-        data.code
+        data.code,
+        data.type
       );
 
       if (pbNew.name === null && pbNew.name === undefined) {
@@ -148,7 +153,8 @@ const updateWithImage = async (req, res, next) => {
                                 description = '${pbNew.description}',
                                 category = '${pbNew.category}',
                                 code = '${pbNew.code}',
-                                photo_url = '${pbNew.photo}'
+                                photo_url = '${pbNew.photo}',
+                                type = '${pbNew.type}'
                                 WHERE id=${id}
                     `;
       db.query(updateData, (err, result) => {
@@ -253,12 +259,37 @@ const getFromTableNumber = (ele, number) => {
       const query = `select * from ${TABLENAME} where category=${ele.id} ORDER BY ID DESC LIMIT ${number}`;
       db.query(query, (err, result) => {
         if (err) reject(err);
+        console.log("result : ", result);
+        console.log("query : ", query);
         resolve(result);
       });
     } catch (er) {
       reject(er);
     }
   });
+};
+
+const addCount = async (req, res, next) => {
+  const datab = new database();
+  const id = req.params.id;
+  const query = `Select count from photo_based where id=${id}`;
+  var query1 = "";
+  var countNum = 0;
+
+  datab
+    .query(query)
+    .then(function (results) {
+      countNum = results[0].count;
+      countNum = countNum + 1;
+      query1 = `UPDATE photo_based SET count=${countNum} where id=${id}`;
+    })
+    .then(() => datab.query(query1))
+    .then(function (results) {
+      res.send({
+        count: countNum,
+        id: id,
+      });
+    });
 };
 
 const getFromTable = async (categoryList, number) => {
@@ -291,32 +322,39 @@ const getPaginatedList = async (req, res, next) => {
   var queryPagination;
   var numPerPage = parseInt(req.query.npp, 10) || 1;
   var page = parseInt(req.query.page, 10) || 0;
-  var categoryId = parseInt(req.query.category)||-1;
+  var categoryId = parseInt(req.query.category) || -1;
   var totalRows = 0;
-  console.log("query : ", req.query);
   var numPages;
   var skip = page * numPerPage;
-  // Here we compute the LIMIT parameter for MySQL query
   var limit = skip + "," + numPerPage;
-  console.log("limit : ", limit);
   const datab = new database();
   var sqlQuery = "";
-  if(categoryId == -1){
+  var sqlQueryNo1 = "";
+  if (categoryId == -1) {
     sqlQuery = `SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`;
-  }else{
+    sqlQueryNo1 = `SELECT count(*) as numRows FROM ${TABLENAME}`;
+  } else {
     sqlQuery = `SELECT * FROM ${TABLENAME} where category=${categoryId} ORDER BY ID DESC LIMIT ${limit}`;
+    sqlQueryNo1 = `SELECT count(*) as numRows FROM ${TABLENAME}  where category=${categoryId}`;
   }
   datab
-    .query(`SELECT count(*) as numRows FROM ${TABLENAME}`)
+    .query(sqlQueryNo1)
     .then(function (results) {
       numRows = results[0].numRows;
       totalRows = numRows;
       numPages = Math.ceil(numRows / numPerPage);
-      console.log("number of pages:", numPages);
+      var skip = page * numPerPage;
+      if (skip > numRows) {
+        skip = 1;
+      }
+      var limit = skip + "," + numPerPage;
+      if (categoryId == -1) {
+        sqlQuery = `SELECT * FROM ${TABLENAME} ORDER BY ID DESC LIMIT ${limit}`;
+      } else {
+        sqlQuery = `SELECT * FROM ${TABLENAME} where category=${categoryId} ORDER BY ID DESC LIMIT ${limit}`;
+      }
     })
-    .then(() =>
-      datab.query(sqlQuery)
-    )
+    .then(() => datab.query(sqlQuery))
     .then(function (results) {
       var responsePayload = {
         results: results,
@@ -331,11 +369,9 @@ const getPaginatedList = async (req, res, next) => {
         };
       } else
         responsePayload.pagination = {
-          err:
-            "queried page " +
-            page +
-            " is >= to maximum page number " +
-            numPages,
+          totalItem: totalRows,
+          current: page,
+          perPage: numPerPage,
         };
       res.json(responsePayload);
     })
@@ -418,5 +454,6 @@ module.exports = {
   updateWithImage,
   getHomeCategoryList,
   getPaginatedList,
-  searchCollection
+  searchCollection,
+  addCount,
 };

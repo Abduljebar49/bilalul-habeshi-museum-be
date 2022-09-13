@@ -10,6 +10,7 @@ const {
   getHomeCategoryList,
   getPaginatedList,
   searchCollection,
+  addCount,
 } = require("../controllers/photo-based-controller");
 
 const router = express.Router();
@@ -23,6 +24,8 @@ router.patch('/pbwi/:id',update);
 router.get('/pb-home/:num',getHomeCategoryList);
 router.get('/pb-paginated',getPaginatedList);
 router.get('/pb-search',searchCollection);
+router.post('/pb-count/:id',addCount);
+
 
 module.exports = {
   routes: router,

@@ -4,13 +4,17 @@ class PhotoBasedDto{
         description,
         category,
         photo,
-        code
+        code,
+        count,
+        type
     ){
         this.name = name;
         this.description = description;
         this.category = category;
         this.photo = photo;
         this.code = code;
+        this.count = count;
+        this.type = type;
     }
 }
 
