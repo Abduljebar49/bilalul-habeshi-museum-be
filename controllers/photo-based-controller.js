@@ -417,7 +417,7 @@ var searchCollection = async (req, res, next) => {
   try {
     var searchQuery = req.query.q;
 
-    const query = `select * from photo_based where name=${searchQuery}`;
+    const query = `select * from photo_based where name='${searchQuery}'`;
 
     db.query(query, (err, result) => {
       if (err) {
