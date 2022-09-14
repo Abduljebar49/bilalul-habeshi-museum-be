@@ -5,6 +5,8 @@ const {
   getSingleData,
   update,
   deleteItem,
+  updateStatus,
+  getAllApproved,
 } = require("../controllers/visitor-controller");
 
 
@@ -15,6 +17,8 @@ router.post("/visitor", create);
 router.get("/visitor/:id", getSingleData);
 router.patch("/visitor/:id", update);
 router.delete("/visitor/:id",deleteItem)
+router.post("/v-approve/:id",updateStatus);
+router.get("/v-approved",getAllApproved);
 
 module.exports = {
   routes: router,

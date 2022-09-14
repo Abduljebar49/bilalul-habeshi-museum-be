@@ -65,7 +65,7 @@ const getSingleData = async (req, res, next) => {
           email: ele[0].email,
           description: ele[0].description,
           location: ele[0].location,
-          status: ele[0].location,
+          status: ele[0].status,
           remark: ele[0].remark,
         };
         res.status(200).send(temp);
@@ -99,7 +99,7 @@ const deleteItem = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const query = `select * from donate_items`;
+    const query = `select * from donate_items where status='pending'`;
     db.query(query, (err, result) => {
       if (err) res.send(err);
       const results = Object.values(JSON.parse(JSON.stringify(result)));
@@ -114,7 +114,7 @@ const getAll = async (req, res, next) => {
           email: ele.email,
           description: ele.description,
           location: ele.location,
-          status: ele.location,
+          status: ele.status,
           remark: ele.remark,
         };
         temp.push(add);
@@ -173,10 +173,58 @@ const update = async (req, res, next) => {
   }
 };
 
+const getAllApproved = async (req, res, next) => {
+  try {
+    const query = `select * from donate_items where status='approved'`;
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+      const results = Object.values(JSON.parse(JSON.stringify(result)));
+      console.log("results : ", results);
+      var temp = [];
+      results.forEach((ele) => {
+        var add = {
+          id: ele.id,
+          name: ele.name,
+          primaryPhoneNumber: ele.p_phone_number,
+          secondaryPhoneNumber: ele.s_phone_number,
+          email: ele.email,
+          description: ele.description,
+          location: ele.location,
+          status: ele.status,
+          remark: ele.remark,
+        };
+        temp.push(add);
+      });
+      res.status(200).send(temp);
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
+const updateStatus = async (req, res, next) => {
+  const id = req.params.id;
+
+  var query = `UPDATE donate_items SET status='approved' where id = ${id}`;
+  try {
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+
+      res.status(201).send({
+        message: "successfully approved",
+      });
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
 module.exports = {
   create,
   getSingleData,
   getAll,
   deleteItem,
   update,
+  getAllApproved,
+  updateStatus
 };

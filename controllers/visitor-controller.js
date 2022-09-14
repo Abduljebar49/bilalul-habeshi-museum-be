@@ -100,7 +100,36 @@ const deleteItem = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const query = `select * from visitors `;
+    const query = `select * from visitors where status='pending'`;
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+      const results = Object.values(JSON.parse(JSON.stringify(result)));
+      console.log("results : ", results);
+      var temp = [];
+      results.forEach((ele) => {
+        var add = {
+          id: ele.id,
+          name: ele.name,
+          PhoneNumber: ele.phone_number,
+          noOfVisitor: ele.visitor_number,
+          visitDate: ele.visit_date,
+          visitTime: ele.visit_time,
+          status: ele.status,
+          remark: ele.remark,
+        };
+        temp.push(add);
+      });
+      res.status(200).send(temp);
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
+
+const getAllApproved = async (req, res, next) => {
+  try {
+    const query = `select * from visitors where status='approved'`;
     db.query(query, (err, result) => {
       if (err) res.send(err);
       const results = Object.values(JSON.parse(JSON.stringify(result)));
@@ -169,10 +198,29 @@ const update = async (req, res, next) => {
   }
 };
 
+const updateStatus = async (req, res, next) => {
+  const id = req.params.id;
+
+  var query = `UPDATE visitors SET status='approved' where id = ${id}`;
+  try {
+    db.query(query, (err, result) => {
+      if (err) res.send(err);
+
+      res.status(201).send({
+        message: "successfully approved",
+      });
+    });
+  } catch (er) {
+    res.send(er);
+  }
+};
+
 module.exports = {
   create,
   getSingleData,
   getAll,
   deleteItem,
   update,
+  updateStatus,
+  getAllApproved
 };
