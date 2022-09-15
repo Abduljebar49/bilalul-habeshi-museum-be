@@ -344,9 +344,9 @@ const getPaginatedList = async (req, res, next) => {
       totalRows = numRows;
       numPages = Math.ceil(numRows / numPerPage);
       var skip = page * numPerPage;
-
+      console.log("page : ",page," numbPerPage: ",numPerPage," totalRows: ",totalRows," skip : ",skip);
       if (skip > numRows || skip == numRows) {
-        skip = 1;
+        skip = 0;
       }
       var limit = skip + "," + numPerPage;
       if (categoryId == -1) {
@@ -354,6 +354,7 @@ const getPaginatedList = async (req, res, next) => {
       } else {
         sqlQuery = `SELECT * FROM ${TABLENAME} where category=${categoryId} ORDER BY ID DESC LIMIT ${limit}`;
       }
+      console.log("sqlQuery : ",sqlQuery);
     })
     .then(() => datab.query(sqlQuery))
     .then(function (results) {
