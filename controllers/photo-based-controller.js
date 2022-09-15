@@ -344,7 +344,8 @@ const getPaginatedList = async (req, res, next) => {
       totalRows = numRows;
       numPages = Math.ceil(numRows / numPerPage);
       var skip = page * numPerPage;
-      if (skip > numRows) {
+
+      if (skip > numRows || skip == numRows) {
         skip = 1;
       }
       var limit = skip + "," + numPerPage;
@@ -373,6 +374,7 @@ const getPaginatedList = async (req, res, next) => {
           current: page,
           perPage: numPerPage,
         };
+        
       res.json(responsePayload);
     })
     .catch(function (err) {
