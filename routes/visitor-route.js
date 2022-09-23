@@ -1,4 +1,5 @@
 const express = require("express");
+const { upload } = require("../controllers/photo-based-controller");
 const {
   getAll,
   create,
@@ -13,7 +14,7 @@ const {
 const router = express.Router();
 
 router.get("/visitors", getAll);
-router.post("/visitor", create);
+router.post("/visitor",upload.single('image'), create);
 router.get("/visitor/:id", getSingleData);
 router.patch("/visitor/:id", update);
 router.delete("/visitor/:id",deleteItem)

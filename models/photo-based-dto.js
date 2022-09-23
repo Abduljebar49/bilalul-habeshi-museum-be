@@ -6,7 +6,8 @@ class PhotoBasedDto{
         photo,
         code,
         count,
-        type
+        type,
+        audio
     ){
         this.name = name;
         this.description = description;
@@ -15,6 +16,7 @@ class PhotoBasedDto{
         this.code = code;
         this.count = count;
         this.type = type;
+        this.audio = audio;
     }
 }
 

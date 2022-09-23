@@ -10,20 +10,30 @@ const TABLENAME = "photo_based";
 
 const create = async (req, res, next) => {
   try {
-    if (!req.file) {
+    if (!req.files) {
+      console.log("req.files : ",req.files," filename : ",req.files['image'][0].filename);
       res.status(401).send("No file to upload");
     } else {
       const data = req.body;
       var imgsrc =
         "https://virtual-backend.bilalulhabeshi.com/images/" +
-        req.file.filename;
+        req.files['image'][0].filename;
+        var audSrd =
+        "https://virtual-backend.bilalulhabeshi.com/audios/" +
+        req.files['audio'][0].filename;
+
+        // var audioSrc = 
+        // "https://virtual-backend.bilalulhabeshi.com/audios/"+req.
+        // console.log("req, ",req);
+        console.log("req, ",req.file);
       var pbNew = new PhotoBasedDto(
         data.name,
         data.description,
         data.category,
         imgsrc,
         data.code,
-        data.type
+        data.type,
+        audSrd
       );
 
       if (pbNew.name === null && pbNew.name === undefined) {
@@ -41,13 +51,12 @@ const create = async (req, res, next) => {
         res.status(401).send({ message: "invalid code field" });
       }
       pbNew.category = parseInt(pbNew.category);
-      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,type) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.type}')`;
+      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,type,audio_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.type}','${pbNew.audio}')`;
       db.query(insertData, (err, result) => {
         if (err) {
           res.status(500);
           throw err;
         }
-        console.log("result : ", result);
         var pbSaved = new PhotoBased(
           result.insertId,
           pbNew.name,
@@ -55,7 +64,9 @@ const create = async (req, res, next) => {
           pbNew.category,
           pbNew.photo,
           pbNew.code,
-          pbNew.type
+          pbNew.count??"count",
+          pbNew.type,
+          pbNew.audio
         );
         res
           .status(200)
@@ -401,8 +412,14 @@ const getHomeCategoryList = async (req, res, next) => {
 
 var storage = multer.diskStorage({
   destination: (req, file, callBack) => {
-    console.log("req");
-    callBack(null, "./public/images/"); // './public/images/' directory name where save the file
+    if (file.fieldname === "image") {
+      callBack(null, './public/images/')
+  }
+  else if (file.fieldname === "audio") {
+    callBack(null, './public/audios/')
+    // cb(null, './uploads/ids/');
+  }
+    // callBack(null, "./public/images/"); // './public/images/' directory name where save the file
   },
   filename: (req, file, callBack) => {
     callBack(
@@ -415,6 +432,10 @@ var storage = multer.diskStorage({
 var upload = multer({
   storage: storage,
 });
+
+// var uploadAudio = multer({
+//   storage: storageAudio,
+// }).single('audio');
 
 var searchCollection = async (req, res, next) => {
   try {

@@ -1,9 +1,21 @@
+const multer = require("multer");
+const path = require("path");
 const db = require("../connection");
 const VisitorDto = require("../models/visitor-dto");
 const Visitor = require("../models/visitor");
+
 const create = async (req, res, next) => {
   try {
+    if (!req.file) {
+      res.status(401).send("No file to upload");
+    } else {
+
     const data = req.body;
+    console.log("file : ",req.file);
+
+    var imgsrc =
+    "https://virtual-backend.bilalulhabeshi.com/images/" +
+    req.file.filename;
 
     var diNew = new VisitorDto(
       data.name,
@@ -11,6 +23,7 @@ const create = async (req, res, next) => {
       data.no_of_visitor,
       data.visit_date,
       data.visit_time,
+      imgsrc,
       "pending",
       data.remark
     );
@@ -22,9 +35,10 @@ const create = async (req, res, next) => {
       visitor_number,
       visit_date,
       visit_time,
+      photo_url,
         status,remark
         ) values('${diNew.name}','${diNew.phoneNumber}','${diNew.noOfVisitor}',
-        '${diNew.visitDate}','${diNew.visitTime}','${diNew.status}','${diNew.remark}')`;
+        '${diNew.visitDate}','${diNew.visitTime}','${diNew.photo}','${diNew.status}','${diNew.remark}')`;
 
     db.query(insertData, (err, result) => {
       if (err) {
@@ -39,13 +53,14 @@ const create = async (req, res, next) => {
         diNew.visitDate,
         diNew.visitTime,
         diNew.status,
+        diNew.photo,
         diNew.remark
       );
       res
         .status(200)
         .send({ message: "Successfully uploaded!", data: pbSaved });
     });
-    // }
+     }
   } catch (er) {
     res.send(er);
   }
@@ -125,7 +140,6 @@ const getAll = async (req, res, next) => {
     res.send(er);
   }
 };
-
 
 const getAllApproved = async (req, res, next) => {
   try {
@@ -215,12 +229,33 @@ const updateStatus = async (req, res, next) => {
   }
 };
 
+var storage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+    // if (file.fieldname === "image") {
+      callBack(null, "./public/visitors/");
+    // } else if (file.fieldname === "audio") {
+    //   callBack(null, "./public/audios/");
+    // }
+  },
+  filename: (req, file, callBack) => {
+    callBack(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+var upload = multer({
+  storage: storage,
+});
+
 module.exports = {
   create,
   getSingleData,
   getAll,
+  upload,
   deleteItem,
   update,
   updateStatus,
-  getAllApproved
+  getAllApproved,
 };

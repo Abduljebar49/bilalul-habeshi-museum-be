@@ -8,7 +8,8 @@ class PhotoBased{
         code,
         count,
         type
-
+        ,
+        audio
     ){
         this.id = id;
         this.name = name;
@@ -18,6 +19,7 @@ class PhotoBased{
         this.code = code;
         this.count = count;
         this.type = type;
+        this.audio = audio;
     }
 }
 
