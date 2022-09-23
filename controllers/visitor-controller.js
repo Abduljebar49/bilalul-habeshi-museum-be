@@ -84,6 +84,7 @@ const getSingleData = async (req, res, next) => {
           visitTime: ele[0].visit_time,
           status: ele[0].status,
           remark: ele[0].remark,
+          audio: ele[0].audio
         };
         res.status(200).send(temp);
       } catch (er) {
@@ -131,6 +132,7 @@ const getAll = async (req, res, next) => {
           visitTime: ele.visit_time,
           status: ele.status,
           remark: ele.remark,
+          audio: ele.audio
         };
         temp.push(add);
       });
