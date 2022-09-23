@@ -25,16 +25,17 @@ const create = async (req, res, next) => {
         // var audioSrc = 
         // "https://virtual-backend.bilalulhabeshi.com/audios/"+req.
         // console.log("req, ",req);
-        console.log("req, ",req.file);
-      var pbNew = new PhotoBasedDto(
-        data.name,
-        data.description,
-        data.category,
-        imgsrc,
-        data.code,
-        data.type,
-        audSrd
-      );
+        var pbNew = new PhotoBasedDto(
+          data.name,
+          data.description,
+          data.category,
+          imgsrc,
+          data.code,
+          0,
+          data.type,
+          audSrd
+          );
+          console.log("req, ",pbNew);
 
       if (pbNew.name === null && pbNew.name === undefined) {
         res.status(401).send({ message: "invalid name field" });
@@ -51,7 +52,7 @@ const create = async (req, res, next) => {
         res.status(401).send({ message: "invalid code field" });
       }
       pbNew.category = parseInt(pbNew.category);
-      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,type,audio_url) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.type}','${pbNew.audio}')`;
+      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,audio_url,type) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.audio}','${pbNew.type}')`;
       db.query(insertData, (err, result) => {
         if (err) {
           res.status(500);
