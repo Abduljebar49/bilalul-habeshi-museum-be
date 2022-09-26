@@ -7,12 +7,13 @@ const {
   deleteItem,
   updateStatus,
   getAllApproved,
+  upload,
 } = require("../controllers/donate-item-controller");
 
 const router = express.Router();
 
 router.get("/donaters", getAll);
-router.post("/donater", create);
+router.post("/donater",upload.single('image'), create);
 router.get("/donater/:id", getSingleData);
 router.patch("/donater/:id", update);
 router.delete("/donater/:id",deleteItem);

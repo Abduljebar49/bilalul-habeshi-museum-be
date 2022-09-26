@@ -79,6 +79,69 @@ const create = async (req, res, next) => {
   }
 };
 
+const createWithOnlyImage = async (req,res,next)=>{
+  try {
+    if (!req.file) {
+      res.status(401).send("No file to upload");
+    } else {
+      const data = req.body;
+      var imgsrc =
+        "https://virtual-backend.bilalulhabeshi.com/images/" +
+        req.file.filename;
+
+        var pbNew = new PhotoBasedDto(
+          data.name,
+          data.description,
+          data.category,
+          imgsrc,
+          data.code,
+          0,
+          data.type,
+          "audSrd"
+          );
+          console.log("req, ",pbNew);
+
+      if (pbNew.name === null && pbNew.name === undefined) {
+        res.status(401).send({ message: "invalid name field" });
+      } else if (
+        pbNew.description === null &&
+        pbNew.description === undefined
+      ) {
+        res.status(401).send({ message: "invalid description field" });
+      } else if (pbNew.category === null && pbNew.category === undefined) {
+        res.status(401).send({ message: "invalid category field" });
+      } else if (pbNew.photo === null && pbNew.photo === undefined) {
+        res.status(401).send({ message: "invalid photo field" });
+      } else if (pbNew.code === null && pbNew.code === undefined) {
+        res.status(401).send({ message: "invalid code field" });
+      }
+      pbNew.category = parseInt(pbNew.category);
+      var insertData = `INSERT INTO ${TABLENAME} (name,description,category,code,photo_url,type) values('${pbNew.name}', '${pbNew.description}',${pbNew.category},'${pbNew.code}','${pbNew.photo}','${pbNew.type}')`;
+      db.query(insertData, (err, result) => {
+        if (err) {
+          res.status(500);
+          throw err;
+        }
+        var pbSaved = new PhotoBased(
+          result.insertId,
+          pbNew.name,
+          pbNew.description,
+          pbNew.category,
+          pbNew.photo,
+          pbNew.code,
+          pbNew.count??"count",
+          pbNew.type,
+        );
+        res
+          .status(200)
+          .send({ message: "Successfully uploaded!", data: pbSaved });
+      });
+    }
+  } catch (er) {
+    res.send(er);
+  }
+}
+
 const update = async (req, res, next) => {
   try {
     const data = req.body;
@@ -166,6 +229,71 @@ const updateWithImage = async (req, res, next) => {
                                 category = '${pbNew.category}',
                                 code = '${pbNew.code}',
                                 photo_url = '${pbNew.photo}',
+                                type = '${pbNew.type}'
+                                WHERE id=${id}
+                    `;
+      db.query(updateData, (err, result) => {
+        if (err) {
+          res.status(500);
+          throw err;
+        }
+        res.status(200).send({ message: "Successfully updated!", data: pbNew });
+      });
+    }
+  } catch (er) {
+    res.sendStatus(500).send(er);
+  }
+};
+
+const updateWithAudio = async (req, res, next) => {
+  try {
+    const data = req.body;
+    const id = req.params.id;
+
+    if (!req.file) {
+      console.log("No file upload");
+      res.status(401).send("No file to upload");
+    } else {
+      const data = req.body;
+      var imgsrc =
+        "https://bilal-backend.skylinkict.com/audios/" + req.file.filename;
+      var pbNew = new PhotoBasedDto(
+        data.name,
+        data.description,
+        data.category,
+        "imgsrc",
+        data.code,
+        data.type,
+        0,
+        imgsrc
+      );
+
+      if (pbNew.name === null && pbNew.name === undefined) {
+        res.status(401).send({ message: "invalid name field" });
+      } else if (
+        pbNew.description === null &&
+        pbNew.description === undefined
+      ) {
+        res.status(401).send({ message: "invalid description field" });
+      } else if (pbNew.category === null && pbNew.category === undefined) {
+        res.status(401).send({ message: "invalid category field" });
+      } else if (pbNew.photo === null && pbNew.photo === undefined) {
+        res.status(401).send({ message: "invalid photo field" });
+      } else if (pbNew.code === null && pbNew.code === undefined) {
+        res.status(401).send({ message: "invalid code field" });
+      }
+
+      // var pbNew = new PhotoBasedWithOutImageDto(
+      //   data.name,
+      //   data.description,
+      //   data.category,
+      //   data.code
+      // );
+      var updateData = `UPDATE photo_based SET name = '${pbNew.name}',
+                                description = '${pbNew.description}',
+                                category = '${pbNew.category}',
+                                code = '${pbNew.code}',
+                                audio_url = '${pbNew.audio}',
                                 type = '${pbNew.type}'
                                 WHERE id=${id}
                     `;
@@ -481,4 +609,6 @@ module.exports = {
   getPaginatedList,
   searchCollection,
   addCount,
+  createWithOnlyImage,
+  updateWithAudio
 };
