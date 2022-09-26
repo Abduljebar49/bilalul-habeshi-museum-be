@@ -13,6 +13,7 @@ const {
   addCount,
   createWithOnlyImage,
   updateWithAudio,
+  updateWithBoth,
 } = require("../controllers/photo-based-controller");
 
 const router = express.Router();
@@ -47,7 +48,20 @@ router.get("/pb-search", searchCollection);
 router.post("/pb-count/:id", addCount);
 router.post("/pb-wi",upload.single('image'),createWithOnlyImage)
 router.patch("/pb-ua/:id",upload.single('audio'),updateWithAudio)
-
+router.patch(
+  "/pb-wb",
+  upload.fields([
+    {
+      name: "image",
+      maxCount: 1,
+    },
+    {
+      name: "audio",
+      maxCount: 1,
+    },
+  ]),
+  updateWithBoth
+);
 module.exports = {
   routes: router,
 };
