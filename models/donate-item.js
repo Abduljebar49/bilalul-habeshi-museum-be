@@ -8,7 +8,6 @@ class DonateItem {
         email,
         description,
         location,
-        photo,
         status,
         remark
     ){
@@ -19,7 +18,6 @@ class DonateItem {
         this.email = email;
         this.description = description;
         this.location = location;
-        this.photo = photo;
         this.status = status;
         this.remark = remark;
     }

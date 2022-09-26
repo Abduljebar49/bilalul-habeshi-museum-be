@@ -1,57 +1,48 @@
-const multer = require("multer");
-const path = require("path");
 const db = require("../connection");
 const DonateItemDto = require("../models/donate-item-dto");
 const DonateItem = require("../models/donate-item");
 
 const create = async (req, res, next) => {
   try {
-    if (!req.file) {
-      res.status(401).send("No file to upload");
-    } else {
-      const data = req.body;
-      var imgsrc =
-        "https://virtual-backend.bilalulhabeshi.com/images/" +
-        req.file.filename;
-      var diNew = new DonateItemDto(
-        data.name,
-        data.p_phone_number,
-        data.s_phone_number,
-        data.email,
-        data.description,
-        data.location,
-        imgsrc,
-        "pending",
-        data.remark
-      );
+    const data = req.body;
 
-      var insertData = `INSERT INTO donate_items (name,p_phone_number,s_phone_number,
-        email,description,location,photo_url,status,remark
+    var diNew = new DonateItemDto(
+      data.name,
+      data.p_phone_number,
+      data.s_phone_number,
+      data.email,
+      data.description,
+      data.location,
+      "pending",
+      data.remark
+    );
+
+    var insertData = `INSERT INTO donate_items (name,p_phone_number,s_phone_number,
+        email,description,location,status,remark
         ) values('${diNew.name}','${diNew.primaryPhoneNumber}','${diNew.secondaryPhoneNumber}',
-        '${diNew.email}','${diNew.description}','${diNew.location}','${diNew.photo}','${diNew.status}','${diNew.remark}')`;
+        '${diNew.email}','${diNew.description}','${diNew.location}','${diNew.status}','${diNew.remark}')`;
 
-      db.query(insertData, (err, result) => {
-        if (err) {
-          res.status(500);
-          throw err;
-        }
-        var pbSaved = new DonateItem(
-          result.insertId,
-          diNew.name,
-          diNew.primaryPhoneNumber,
-          diNew.secondaryPhoneNumber,
-          diNew.email,
-          diNew.description,
-          diNew.location,
-          diNew.photo,
-          diNew.status,
-          diNew.remark
-        );
-        res
-          .status(200)
-          .send({ message: "Successfully uploaded!", data: pbSaved });
-      });
-    }
+    db.query(insertData, (err, result) => {
+      if (err) {
+        res.status(500);
+        throw err;
+      }
+      var pbSaved = new DonateItem(
+        result.insertId,
+        diNew.name,
+        diNew.primaryPhoneNumber,
+        diNew.secondaryPhoneNumber,
+        diNew.email,
+        diNew.description,
+        diNew.location,
+        diNew.status,
+        diNew.remark
+      );
+      res
+        .status(200)
+        .send({ message: "Successfully uploaded!", data: pbSaved });
+    });
+    // }
   } catch (er) {
     res.send(er);
   }
@@ -95,13 +86,13 @@ const deleteItem = async (req, res, next) => {
 
     db.query(query, (err, result) => {
       try {
-        if (err) res.sendStatus(401).send({ err });
+        if (err) res.sendStatus(401).send({err});
         res.status(200).send({ message: "successfully deleted", data: result });
       } catch {
         res.send([]);
       }
     });
-    res.status(200).send({ result });
+    res.status(200).send({result});
   } catch (er) {
     res.send([]);
   }
@@ -124,7 +115,6 @@ const getAll = async (req, res, next) => {
           email: ele.email,
           description: ele.description,
           location: ele.location,
-          photo:ele.photo_url,
           status: ele.status,
           remark: ele.remark,
         };
@@ -230,29 +220,12 @@ const updateStatus = async (req, res, next) => {
   }
 };
 
-var storage = multer.diskStorage({
-  destination: (req, file, callBack) => {
-    callBack(null, "./public/images/");
-  },
-  filename: (req, file, callBack) => {
-    callBack(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-
-var upload = multer({
-  storage: storage,
-});
-
 module.exports = {
   create,
   getSingleData,
   getAll,
   deleteItem,
   update,
-  upload,
   getAllApproved,
-  updateStatus,
+  updateStatus
 };

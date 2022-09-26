@@ -6,6 +6,7 @@ class VisitorDto {
         noOfVisitor,
         visitDate,
         visitTime,
+        photo,
         status,
         remark
     ){
@@ -14,6 +15,7 @@ class VisitorDto {
         this.noOfVisitor = noOfVisitor;
         this.visitDate = visitDate;
         this.visitTime = visitTime;
+        this.photo = photo;
         this.status = status;
         this.remark = remark;
     }

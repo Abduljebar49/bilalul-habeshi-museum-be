@@ -8,7 +8,6 @@ const videoBasedRoute = require("./routes/video-based-route");
 const donatorsRoute = require("./routes/donate-route");
 const visitorsRoute = require("./routes/visitor-route");
 const dashboardRoute = require("./routes/dashboard-route");
-const commentRoute = require("./routes/comment-route");
 
 const app = express();
 const http = require("http");
@@ -41,7 +40,6 @@ app.use("/api", videoBasedRoute.routes);
 app.use("/api", donatorsRoute.routes);
 app.use("/api", visitorsRoute.routes);
 app.use("/api", dashboardRoute.routes);
-app.use("/api", commentRoute.routes);
 
 // app.post("/post", upload.single("image"), (req, res) => {
 // });
