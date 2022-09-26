@@ -49,7 +49,7 @@ router.post("/pb-count/:id", addCount);
 router.post("/pb-wi",upload.single('image'),createWithOnlyImage)
 router.patch("/pb-ua/:id",upload.single('audio'),updateWithAudio)
 router.patch(
-  "/pb-wb",
+  "/pb-wb/:id",
   upload.fields([
     {
       name: "image",
