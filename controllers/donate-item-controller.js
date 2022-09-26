@@ -65,7 +65,6 @@ const getSingleData = async (req, res, next) => {
           email: ele[0].email,
           description: ele[0].description,
           location: ele[0].location,
-          photo:ele[0].photo_url,
           status: ele[0].status,
           remark: ele[0].remark,
         };
