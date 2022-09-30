@@ -256,7 +256,7 @@ const updateWithAudio = async (req, res, next) => {
     } else {
       const data = req.body;
       var imgsrc =
-      "https://virtual-backend.bilalulhabeshi.com/images/" + + req.file.filename;
+      "https://virtual-backend.bilalulhabeshi.com/audios/" + req.file.filename;
       var pbNew = new PhotoBasedDto(
         data.name,
         data.description,
